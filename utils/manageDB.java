@@ -21,12 +21,12 @@ public class manageDB {
         }
     }
 
-    // 
-    public ResultSet queryUsers(String query) {
+    // Consultar els clients de la base de dades amb vendes
+    public ResultSet queryUsers(String dni) {
         ResultSet rs = null;
         try {
             Statement stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM clients");
+            rs = stmt.executeQuery("SELECT dni, nom, count(*), sum(total_final) FROM clients inner join tiquets on dni_client = dni WHERE dni = '" + dni + "' group by dni");
         } catch (SQLException e) {
             e.printStackTrace();
         }
