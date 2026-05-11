@@ -1,6 +1,6 @@
-package PE11_TPV.objects;
+package objects;
 
-public class Article {
+public abstract class Article {
     
     //ATRIBUTES
     private int id;
