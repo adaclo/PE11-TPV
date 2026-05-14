@@ -32,4 +32,16 @@ public class manageDB {
         }
         return rs;
     }
+
+    // Consultar els productes de la base de dades
+    public ResultSet queryProducts(String code) {
+        ResultSet rs = null;
+        try {
+            Statement stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT id, nom, count(*) FROM productes WHERE codi = '" + code + "' group by codi");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
 }
