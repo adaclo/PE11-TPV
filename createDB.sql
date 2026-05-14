@@ -6,12 +6,22 @@ CREATE DATABASE tpv_botiga;
 USE tpv_botiga;
 
 -- =========================
+-- TAULA FAMILIES
+-- =========================
+CREATE TABLE families (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL UNIQUE
+);
+
+INSERT INTO families (nom) VALUES ('camisa'), ('pantaló');
+
+-- =========================
 -- TAULA ARTICLES
 -- =========================
 CREATE TABLE articles (
     id INT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    familia ENUM('camisa', 'pantaló') NOT NULL,
+    id_familia INT NOT NULL,
 
     talla_coll INT,
     amplada_pit INT,
@@ -23,14 +33,14 @@ CREATE TABLE articles (
     iva INT NOT NULL,
     stock INT NOT NULL,
 
+    FOREIGN KEY (id_familia) REFERENCES families(id),
+
     CHECK (iva BETWEEN 4 AND 21),
     CHECK (stock >= 0),
-
-    CHECK (
-        (familia = 'camisa' AND talla_coll BETWEEN 36 AND 52 AND amplada_pit BETWEEN 10 AND 15)
-        OR
-        (familia = 'pantaló' AND talla_cintura BETWEEN 24 AND 56 AND llargada_camal BETWEEN 32 AND 46)
-    )
+    CHECK (talla_coll IS NULL OR talla_coll BETWEEN 36 AND 52),
+    CHECK (amplada_pit IS NULL OR amplada_pit BETWEEN 10 AND 15),
+    CHECK (talla_cintura IS NULL OR talla_cintura BETWEEN 24 AND 56),
+    CHECK (llargada_camal IS NULL OR llargada_camal BETWEEN 32 AND 46)
 );
 
 -- =========================

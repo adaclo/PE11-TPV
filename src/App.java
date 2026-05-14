@@ -158,22 +158,37 @@ public class App {
     }
 
     public static int llegirEnter(String missatge) {
+    int numero = 0;
+    boolean esValid = false;
 
-        int numero;
-
-        while (true) {
-
-            try {
-
-                System.out.print(missatge);
-                numero = Integer.parseInt(sc.nextLine());
-                return numero;
-
-            } catch (NumberFormatException e) {
-
-                System.out.println("Introdueix un número vàlid.");
-            }
+    while (!esValid) {
+        try {
+            System.out.print(missatge);
+            String input = sc.nextLine();
+            numero = Integer.parseInt(input);
+            esValid = true; // Si arribem aquí, el número és correcte
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: Has d'introduir un número sencer vàlid.");
         }
+        }
+        return numero;
+    }
+
+    public static double llegirDouble(String missatge) {
+    double numero = 0;
+    boolean esValid = false;
+
+    while (!esValid) {
+        try {
+            System.out.print(missatge);
+            String input = sc.nextLine().replace(',', '.'); // Accepta tant punts com comes
+            numero = Double.parseDouble(input);
+            esValid = true;
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: Introdueix un valor decimal correcte (Ex: 10.50).");
+        }
+        }
+        return numero;
     }
 }
 
