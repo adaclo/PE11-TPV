@@ -7,13 +7,12 @@ public class Pantalon extends Article {
     
     //EMPTY CONSTRUCTOR
     public Pantalon() {
-        super();
-        this.family = "Pantalon";
+        super(0, "", 2, 0.0, 0, 0); // Assuming 2 represents the family ID for Pants
     }
 
     //FULL CONSTRUCTOR
     public Pantalon(int id, String name, double basePrice, double IVA, int stock, int waistSize, int legLength) {
-        super(id, name, "Pantalon", basePrice, IVA, stock);
+        super(id, name, 2, basePrice, IVA, stock); // Assuming 2 represents the family ID for Pants
         this.waistSize = waistSize;
         this.legLength = legLength;
     }
@@ -41,7 +40,7 @@ public class Pantalon extends Article {
         return "Pantalon{" +
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
-                ", family='" + getFamily() + '\'' +
+                ", familyId=" + getFamilyId() +
                 ", basePrice=" + getBasePrice() +
                 ", IVA=" + getIVA() +
                 ", stock=" + getStock() +
