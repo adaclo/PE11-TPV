@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 import java.util.Scanner;
-=======
->>>>>>> 0b798967bfed4a3f3ad0c5ad1a9eb2e3ef862787
+
 
 public class App {
 
@@ -14,57 +12,27 @@ public class App {
         int opcio;
 
         do {
-
             mostrarMenu();
             opcio = llegirEnter("Escull una opció: ");
 
             switch (opcio) {
-
-                case 1:
-                    importarArticles();
-                    break;
-
-                case 2:
-                    menuGestioArticles();
-                    break;
-
-                case 3:
-                    menuGestioClients();
-                    break;
-
-                case 4:
-                    tpv();
-                    break;
-
-                case 5:
-                    consultaVendesClient();
-                    break;
-
-                case 6:
-                    consultaVendesArticle();
-                    break;
-
-                case 7:
-                    calcularBeneficis();
-                    break;
-
-                case 8:
-                    recompraAutomatica();
-                    break;
-
-                case 0:
-                    System.out.println("Sortint de l'aplicació...");
-                    break;
-
-                default:
-                    System.out.println("Opció no vàlida.");
+                case 1: importarArticles(); break;
+                case 2: menuGestioArticles(); break;
+                case 3: menuGestioClients(); break;
+                case 4: tpv(); break;
+                case 5: consultaVendesClient(); break;
+                case 6: consultaVendesArticle(); break;
+                case 7: calcularBeneficis(); break;
+                case 8: recompraAutomatica(); break;
+                case 0: System.out.println("Sortint..."); break;
+                default: System.out.println("Opció no vàlida.");
             }
 
-        } while (opcio != 0);
+        } while (opcio != 0); 
     }
 
     public static void mostrarMenu() {
-
+        
         System.out.println("\n========== TPV BOTIGA ==========");
         System.out.println("1. Importació articles");
         System.out.println("2. Gestió d'articles");
