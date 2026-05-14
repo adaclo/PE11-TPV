@@ -45,6 +45,18 @@ public class manageDB {
         return rs;
     }
 
+    // Consultar totes les families de la base de dades
+    public ResultSet consultaFamilies() {
+        ResultSet rs = null;
+        try {
+            Statement stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM families");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
     // Consultar tots els tiquets de la base de dades
     public ResultSet consultaTiquets() {
         ResultSet rs = null;
@@ -67,6 +79,24 @@ public class manageDB {
             e.printStackTrace();
         }
         return rs;
+    }
+
+    // Insertar families a la base de dades
+    public int inserirFamilia(String nom) {
+        String sql = "INSERT IGNORE INTO families (nom) VALUES (?)";
+        int estat = 0;
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, nom);
+
+            ps.executeUpdate();
+            estat = 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            estat = 0;
+        }
+        return estat;
     }
 
     // Insertar clients a la base de dades
