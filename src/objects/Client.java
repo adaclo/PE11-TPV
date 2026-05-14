@@ -1,4 +1,4 @@
-package PE11-TPV.objects;
+package objects;
 
 public class Client {
 

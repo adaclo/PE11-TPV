@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import java.util.Scanner;
+=======
+>>>>>>> 0b798967bfed4a3f3ad0c5ad1a9eb2e3ef862787
 
 public class App {
 
