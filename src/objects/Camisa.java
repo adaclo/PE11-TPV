@@ -9,14 +9,14 @@ public class Camisa extends Article {
     //EMPTY CONSTRUCTOR
     public Camisa() {
         super();
-        this.family = "Camisa";
+        this.familyId = 1;
     }
 
     //FULL CONSTRUCTOR
     public Camisa(int id, String name, double basePrice, double IVA, 
                     int stock, int neckSize, int chestWidth) {
 
-        super(id, name, "Camisa", basePrice, IVA, stock);
+        super(id, name, 1, basePrice, IVA, stock);
 
         this.neckSize = neckSize;
         this.chestWidth = chestWidth;
@@ -44,7 +44,7 @@ public class Camisa extends Article {
     public String toString() {
         return "Camisa [id=" + getId()
         + ", name=" + getName()
-        + ", family=" + getFamily()
+        + ", familyId=" + getFamilyId()
         + ", basePrice=" + getBasePrice()
         + ", IVA=" + getIVA()
         + ", stock=" + getStock()
