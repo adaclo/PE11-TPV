@@ -33,18 +33,29 @@ public class manageDB {
         return rs;
     }
 
-    // Consultar tots els articles de la base de dades
-    public ResultSet consultaArticles() {
+    // Consultar totes les camises de la base de dades
+    public ResultSet consultaCamises() {
         ResultSet rs = null;
         try {
             Statement stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM articles");
+            rs = stmt.executeQuery("SELECT articles.id, articles.nom, families.nom AS nom_familia, articles.talla_coll, articles.amplada_pit, articles.preu_base, articles.iva, articles.stock FROM articles JOIN families ON articles.id_familia = families.id WHERE families.nom = 'Camises'");
         } catch (Exception e) {
             e.printStackTrace();
         }
         return rs;
     }
-
+    // Consultar tots els pantalons de la base de dades
+    public ResultSet consultaPantalons() {
+        ResultSet rs = null;
+        try {
+            Statement stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT articles.id, articles.nom, families.nom AS nom_familia, articles.talla_cintura, articles.llargada_camal, articles.preu_base, articles.iva, articles.stock FROM articles JOIN families ON articles.id_familia = families.id WHERE families.nom = 'Pantalons'");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+    
     // Consultar totes les families de la base de dades
     public ResultSet consultaFamilies() {
         ResultSet rs = null;
