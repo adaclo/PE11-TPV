@@ -72,4 +72,37 @@ public class manageJSON {
             System.out.println("Primer has de carregar el JSON");
         }
     }
+
+    // Convertir un camp del JSON a int
+    public int getInt(JSONObject article, String camp) {
+        int num = 0;
+        try {
+            num = ((Number) article.get(camp)).intValue();
+        } catch (Exception e) {
+            num = 0;
+        }
+        return num;
+    }
+
+    // Convertir un camp del JSON a Integer
+    public Integer getInteger(JSONObject article, String camp) {
+        Integer num = null;
+        try {
+            num = ((Number) article.get(camp)).intValue();
+        } catch (Exception e) {
+            num = null;
+        }
+        return num;
+    }
+
+    // Convertir un camp del JSON a double
+    public double getDouble(JSONObject article, String camp) {
+        double num = 0;
+        try {
+            num = ((Number) article.get(camp)).doubleValue();
+        } catch (Exception e) {
+            num = 0;
+        }
+        return num;
+    }
 }
