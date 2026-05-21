@@ -84,31 +84,36 @@ public class manageJSON {
         int afegits = 0;
         int actualitzats = 0;
         try {
-            comptarFamilies();
+            // Assegura't de carregar primer si no s'ha fet
+            if (articles == null) carregarJSON();
 
-            for (Object o:articles) {
-                JSONObject article = (JSONObject) o;
+        for (Object o : articles) {
+            JSONObject article = (JSONObject) o;
 
-                int id = getInt(article, "id");
-                String nom = (String) article.get("nom");
-                String familia = (String) article.get("familia");
-                int id_familia = db.consultaIdFamilia(familia);
-                Integer talla_coll = getInteger(article, "talla_coll");
-                Integer amplada_pit = getInteger(article, "amplada_pit");
-                Integer talla_cintura = getInteger(article, "talla_cintura");
-                Integer llargada_camal = getInteger(article, "llargada_camal");
-                double preu_base = getDouble(article, "preu_base");
-                int iva = getInt(article, "iva");
-                int stock = getInt(article, "stock");
+            int id = getInt(article, "id");
+            String nom = (String) article.get("nom");
+            
+            // MODIFICACIÓ: Ara llegim directament el "familyId" del JSON
+            // Si el teu JSON encara diu "familia", canvia-ho a l'etiqueta corresponent
+            int familyId = getInt(article, "familyId"); 
 
-                if (db.existeixArticle(id)) {
-                    db.actualitzarArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
-                    actualitzats++;
-                } else {
-                    db.inserirArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
-                    afegits++;
-                }
+            Integer talla_coll = getInteger(article, "talla_coll");
+            Integer amplada_pit = getInteger(article, "amplada_pit");
+            Integer talla_cintura = getInteger(article, "talla_cintura");
+            Integer llargada_camal = getInteger(article, "llargada_camal");
+            double preu_base = getDouble(article, "preu_base");
+            int iva = getInt(article, "iva");
+            int stock = getInt(article, "stock");
+
+            if (db.existeixArticle(id)) {
+                // Passem el familyId directament
+                db.actualitzarArticle(id, nom, familyId, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+                actualitzats++;
+            } else {
+                db.inserirArticle(id, nom, familyId, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+                afegits++;
             }
+        }
 
             System.out.println("(+) Articles afegits: " + afegits);
             System.out.println("(+) Articles actualitzats: " + actualitzats);
