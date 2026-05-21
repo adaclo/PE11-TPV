@@ -84,42 +84,47 @@ public class manageJSON {
         int afegits = 0;
         int actualitzats = 0;
         try {
-            // Assegura't de carregar primer si no s'ha fet
-            if (articles == null) carregarJSON();
+         if (articles == null) carregarJSON();
 
-        for (Object o : articles) {
+            for (Object o : articles) {
             JSONObject article = (JSONObject) o;
 
+            // 1. Extraure dades genèriques
             int id = getInt(article, "id");
             String nom = (String) article.get("nom");
+            String nomFamilia = (String) article.get("familia"); // "camisa" o "pantaló"
             
-            // MODIFICACIÓ: Ara llegim directament el "familyId" del JSON
-            // Si el teu JSON encara diu "familia", canvia-ho a l'etiqueta corresponent
-            int familyId = getInt(article, "familyId"); 
+            // 2. Obtenir l'ID de la família des de la DB (perquè el JSON té text)
+            int id_familia = db.consultaIdFamilia(nomFamilia);
 
+            // 3. Extraure atributs específics (poden ser nulls segons el tipus)
             Integer talla_coll = getInteger(article, "talla_coll");
             Integer amplada_pit = getInteger(article, "amplada_pit");
             Integer talla_cintura = getInteger(article, "talla_cintura");
             Integer llargada_camal = getInteger(article, "llargada_camal");
+            
             double preu_base = getDouble(article, "preu_base");
             int iva = getInt(article, "iva");
             int stock = getInt(article, "stock");
 
+            // 4. Lògica d'inserció o actualització
             if (db.existeixArticle(id)) {
-                // Passem el familyId directament
-                db.actualitzarArticle(id, nom, familyId, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+                db.actualitzarArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
                 actualitzats++;
             } else {
-                db.inserirArticle(id, nom, familyId, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+                db.inserirArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
                 afegits++;
             }
         }
 
-            System.out.println("(+) Articles afegits: " + afegits);
-            System.out.println("(+) Articles actualitzats: " + actualitzats);
+            System.out.println("(+) Procés finalitzat:");
+            System.out.println("    - Articles nous: " + afegits);
+            System.out.println("    - Articles actualitzats: " + actualitzats);
+        
         } catch (Exception e) {
+            System.out.println("(!) Error durant la importació a la base de dades.");
             e.printStackTrace();
-        }
+            }
     }
 
     // Convertir un camp del JSON a int
