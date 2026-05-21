@@ -1,13 +1,25 @@
 import java.util.Scanner;
-
+import utils.manageJSON;
+import utils.manageDB;
 
 public class App {
 
-    static Scanner sc = new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in);
+    private manageDB db;
+    private manageJSON json;
+
     public static void main(String[] args) {
         App p = new App();
+        p.inicialitzar();
         p.programa();
     }
+
+    public void inicialitzar() {
+        this.db = new manageDB("botiga_db"); 
+        this.db.establirConexio(); 
+        this.json = new manageJSON(this.db);
+    }
+
     public void programa() {
         int opcio;
 
@@ -31,7 +43,7 @@ public class App {
         } while (opcio != 0); 
     }
 
-    public static void mostrarMenu() {
+    public void mostrarMenu() {
         
         System.out.println("\n========== TPV BOTIGA ==========");
         System.out.println("1. Importació articles");
@@ -46,7 +58,7 @@ public class App {
         System.out.println("================================");
     }
 
-    public static void menuGestioArticles() {
+    public void menuGestioArticles() {
 
         int opcio;
 
@@ -89,7 +101,7 @@ public class App {
         } while (opcio != 0);
     }
 
-    public static void menuGestioClients() {
+    public void menuGestioClients() {
 
         int opcio;
 
@@ -133,31 +145,36 @@ public class App {
     }
 
 
-    public static void importarArticles() {
-        System.out.println("Importació d'articles...");
+    public void importarArticles() {
+        System.out.println("\n--- PROCÉS D'IMPORTACIÓ ---");
+        // Crida als mètodes de manageJSON que ja hem preparat
+        json.carregarJSON();
+        json.comptarArticles();
+        json.importarArticlesBD();
+        System.out.println("---------------------------\n");
     }
 
-    public static void tpv() {
+    public void tpv() {
         System.out.println("TPV...");
     }
 
-    public static void consultaVendesClient() {
+    public void consultaVendesClient() {
         System.out.println("Consulta vendes client...");
     }
 
-    public static void consultaVendesArticle() {
+    public void consultaVendesArticle() {
         System.out.println("Consulta vendes article...");
     }
 
-    public static void calcularBeneficis() {
+    public void calcularBeneficis() {
         System.out.println("Calculant beneficis...");
     }
 
-    public static void recompraAutomatica() {
+    public void recompraAutomatica() {
         System.out.println("Recompra automàtica...");
     }
 
-    public static int llegirEnter(String missatge) {
+    public int llegirEnter(String missatge) {
     int numero = 0;
     boolean esValid = false;
 
@@ -174,7 +191,7 @@ public class App {
         return numero;
     }
 
-    public static double llegirDouble(String missatge) {
+    public double llegirDouble(String missatge) {
     double numero = 0;
     boolean esValid = false;
 
