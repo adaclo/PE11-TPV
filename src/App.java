@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import utils.manageJSON;
 import utils.manageDB;
+import java.sql.ResultSet;
 
 public class App {
 
@@ -76,19 +77,19 @@ public class App {
             switch (opcio) {
 
                 case 1:
-                    System.out.println("Alta article...");
+                    altaArticle();
                     break;
 
                 case 2:
-                    System.out.println("Modificar article...");
+                    modificarArticle();
                     break;
 
                 case 3:
-                    System.out.println("Esborrar article...");
+                    esborrarArticle();
                     break;
 
                 case 4:
-                    System.out.println("Consultar articles...");
+                    consultarArticle();
                     break;
 
                 case 0:
