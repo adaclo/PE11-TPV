@@ -15,7 +15,7 @@ public class App {
     }
 
     public void inicialitzar() {
-        this.db = new manageDB("botiga_db"); 
+        this.db = new manageDB("tpv_botiga"); 
         this.db.establirConexio(); 
         this.json = new manageJSON(this.db);
     }
