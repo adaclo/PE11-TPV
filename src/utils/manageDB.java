@@ -318,6 +318,32 @@ public class manageDB {
         return estat;
     }
 
+    // Insertar articles a la base de dades amb id automatic
+    public int inserirArticleAuto(String nom, int id_familia, Integer talla_coll, Integer amplada_pit, Integer talla_cintura, Integer llargada_camal, double preu_base, int iva, int stock) {
+        String sql = "INSERT INTO articles (nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        int estat = 0;
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, nom);
+            ps.setInt(2, id_familia);
+            ps.setObject(3, talla_coll);
+            ps.setObject(4, amplada_pit);
+            ps.setObject(5, talla_cintura);
+            ps.setObject(6, llargada_camal);
+            ps.setDouble(7, preu_base);
+            ps.setInt(8, iva);
+            ps.setInt(9, stock);
+
+            ps.executeUpdate();
+            estat = 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            estat = 0;
+        }
+        return estat;
+    }
+
     // Actualitzar articles a la base de dades
     public int actualitzarArticle(int id, String nom, int id_familia, Integer talla_coll, Integer amplada_pit, Integer talla_cintura, Integer llargada_camal, double preu_base, int iva, int stock) {
         String sql = "UPDATE articles SET nom = ?, id_familia = ?, talla_coll = ?, amplada_pit = ?, talla_cintura = ?, llargada_camal = ?, preu_base = ?, iva = ?, stock = ? WHERE id = ?";
