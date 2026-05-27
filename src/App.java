@@ -194,7 +194,7 @@ public class App {
             switch (opcio) {
 
                 case 1:
-                    altaArticle();
+                    System.out.println("Alta client...");
                     break;
 
                 case 2:
