@@ -176,6 +176,34 @@ public class App {
         }
     }
 
+    public void consultarArticle() {
+        System.out.println("\n--- CONSULTAR ARTICLE ---");
+
+        int id = llegirEnter("ID article: ");
+
+        try {
+            ResultSet rs = db.consultaArticlePerId(id);
+
+            if (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id"));
+                System.out.println("Nom: " + rs.getString("nom"));
+                System.out.println("ID familia: " + rs.getInt("id_familia"));
+                System.out.println("Familia: " + rs.getString("nom_familia"));
+                System.out.println("Talla coll: " + rs.getObject("talla_coll"));
+                System.out.println("Amplada pit: " + rs.getObject("amplada_pit"));
+                System.out.println("Talla cintura: " + rs.getObject("talla_cintura"));
+                System.out.println("Llargada camal: " + rs.getObject("llargada_camal"));
+                System.out.println("Preu base: " + rs.getDouble("preu_base"));
+                System.out.println("IVA: " + rs.getInt("iva"));
+                System.out.println("Stock: " + rs.getInt("stock"));
+            } else {
+                System.out.println("No existeix cap article amb aquest ID.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void menuGestioClients() {
 
         int opcio;
