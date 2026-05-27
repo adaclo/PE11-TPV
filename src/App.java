@@ -127,7 +127,7 @@ public class App {
         int iva = llegirEnter("IVA: ");
         int stock = llegirEnter("Stock: ");
 
-        int estat = db.inserirArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+        int estat = db.inserirArticleAuto(nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
 
         if (estat == 1) {
             System.out.println("Article inserit correctament.");
@@ -172,6 +172,24 @@ public class App {
                 System.out.println("Article modificat correctament.");
             } else {
                 System.out.println("No s'ha pogut modificar l'article.");
+            }
+        }
+    }
+
+    public void esborrarArticle() {
+        System.out.println("\n--- ESBORRAR ARTICLE ---");
+
+        int id = llegirEnter("ID article a esborrar: ");
+
+        if (!db.existeixArticle(id)) {
+            System.out.println("No existeix cap article amb aquest ID.");
+        } else {
+            int estat = db.eliminarArticle(id);
+
+            if (estat == 1) {
+                System.out.println("Article esborrat correctament.");
+            } else {
+                System.out.println("No s'ha pogut esborrar l'article.");
             }
         }
     }
