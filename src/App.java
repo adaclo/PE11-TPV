@@ -190,34 +190,188 @@ public class App {
         if (!db.existeixArticle(id)) {
             System.out.println("No existeix cap article amb aquest ID.");
         } else {
-            String nom = llegirText("Nou nom article: ");
-            int id_familia = llegirEnter("Nou ID familia (1 camisa, 2 pantaló): ");
+            
+            try {
+                ResultSet rs = db.consultaArticlePerId(id);
 
-            Integer talla_coll = null;
-            Integer amplada_pit = null;
-            Integer talla_cintura = null;
-            Integer llargada_camal = null;
+                if (rs.next()) {
+                    String nom = rs.getString("nom");
+                    int id_familia = rs.getInt("id_familia");
+                    Integer talla_coll = (Integer) rs.getObject("talla_coll");
+                    Integer amplada_pit = (Integer) rs.getObject("amplada_pit");
+                    Integer talla_cintura = (Integer) rs.getObject("talla_cintura");
+                    Integer llargada_camal = (Integer) rs.getObject("llargada_camal");
+                    double preu_base = rs.getDouble("preu_base");
+                    int iva = rs.getInt("iva");
+                    int stock = rs.getInt("stock");
 
-            if (id_familia == 1) {
-                talla_coll = llegirEnter("Nova talla coll: ");
-                amplada_pit = llegirEnter("Nova amplada pit: ");
-            }
+                    int opcio = 0;
 
-            if (id_familia == 2) {
-                talla_cintura = llegirEnter("Nova talla cintura: ");
-                llargada_camal = llegirEnter("Nova llargada camal: ");
-            }
+                    do {
+                        System.out.println("--------------------------------");
+                        System.out.println("\n--- DADES ACTUALS ---");
+                        consultarArticlePerID(id);
+                        System.out.println("\n--- MODIFICAR ARTICLE ID " + id + " ---");
+                        System.out.println("1. Modificar nom");
+                        System.out.println("2. Modificar familia");
+                        System.out.println("3. Modificar talla coll");
+                        System.out.println("4. Modificar amplada pit");
+                        System.out.println("5. Modificar talla cintura");
+                        System.out.println("6. Modificar llargada camal");
+                        System.out.println("7. Modificar preu base");
+                        System.out.println("8. Modificar IVA");
+                        System.out.println("9. Modificar stock");
+                        System.out.println("0. Tornar");
 
-            double preu_base = llegirDouble("Nou preu base: ");
-            int iva = llegirEnter("Nou IVA: ");
-            int stock = llegirEnter("Nou stock: ");
+                        opcio = llegirEnter("Opció: ");
 
-            int estat = db.actualitzarArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+                        switch (opcio) {
 
-            if (estat == 1) {
-                System.out.println("Article modificat correctament.");
-            } else {
-                System.out.println("No s'ha pogut modificar l'article.");
+                            case 1:
+                                nom = llegirText("Nou nom article: ");
+                                break;
+
+                            case 2:
+                                do {
+                                    id_familia = llegirEnter("Nou ID familia (1 camisa, 2 pantaló): ");
+                                    if (id_familia != 1 && id_familia != 2) {
+                                        System.out.println("(!) ID familia no vàlid. Introdueix 1 per camisa o 2 per pantaló.");
+                                    }
+                                } while (id_familia != 1 && id_familia != 2);
+
+                                talla_coll = null;
+                                amplada_pit = null;
+                                talla_cintura = null;
+                                llargada_camal = null;
+
+                                if (id_familia == 1) {
+                                    do {
+                                        talla_coll = llegirEnter("Nova talla coll: ");
+                                        if (talla_coll < 36 || talla_coll > 52) {
+                                            System.out.println("(!) Talla coll no vàlida. Ha d'estar entre 36 i 52.");
+                                        }
+                                    } while (talla_coll < 36 || talla_coll > 52);
+
+                                    do {
+                                        amplada_pit = llegirEnter("Nova amplada pit: ");
+                                        if (amplada_pit < 10 || amplada_pit > 15) {
+                                            System.out.println("(!) Amplada pit no vàlida. Ha d'estar entre 10 i 15.");
+                                        }
+                                    } while (amplada_pit < 10 || amplada_pit > 15);
+                                }
+
+                                if (id_familia == 2) {
+                                    do {
+                                        talla_cintura = llegirEnter("Nova talla cintura: ");
+                                        if (talla_cintura < 24 || talla_cintura > 56) {
+                                            System.out.println("(!) Talla cintura no vàlida. Ha d'estar entre 24 i 56.");
+                                        }
+                                    } while (talla_cintura < 24 || talla_cintura > 56);
+
+                                    do {
+                                        llargada_camal = llegirEnter("Nova llargada camal: ");
+                                        if (llargada_camal < 32 || llargada_camal > 46) {
+                                            System.out.println("(!) Llargada camal no vàlida. Ha d'estar entre 32 i 46.");
+                                        }
+                                    } while (llargada_camal < 32 || llargada_camal > 46);
+                                }
+                                break;
+
+                            case 3:
+                                if (id_familia == 1) {
+                                    do {
+                                        talla_coll = llegirEnter("Nova talla coll: ");
+                                        if (talla_coll < 36 || talla_coll > 52) {
+                                            System.out.println("(!) Talla coll no vàlida. Ha d'estar entre 36 i 52.");
+                                        }
+                                    } while (talla_coll < 36 || talla_coll > 52);
+                                } else {
+                                    System.out.println("Aquest camp només és per camises.");
+                                }
+                                break;
+
+                            case 4:
+                                if (id_familia == 1) {
+                                    do {
+                                        amplada_pit = llegirEnter("Nova amplada pit: ");
+                                        if (amplada_pit < 10 || amplada_pit > 15) {
+                                            System.out.println("(!) Amplada pit no vàlida. Ha d'estar entre 10 i 15.");
+                                        }
+                                    } while (amplada_pit < 10 || amplada_pit > 15);
+                                } else {
+                                    System.out.println("Aquest camp només és per camises.");
+                                }
+                                break;
+
+                            case 5:
+                                if (id_familia == 2) {
+                                    do {
+                                        talla_cintura = llegirEnter("Nova talla cintura: ");
+                                        if (talla_cintura < 24 || talla_cintura > 56) {
+                                            System.out.println("(!) Talla cintura no vàlida. Ha d'estar entre 24 i 56.");
+                                        }
+                                    } while (talla_cintura < 24 || talla_cintura > 56);
+                                } else {
+                                    System.out.println("Aquest camp només és per pantalons.");
+                                }
+                                break;
+
+                            case 6:
+                                if (id_familia == 2) {
+                                    do {
+                                        llargada_camal = llegirEnter("Nova llargada camal: ");
+                                        if (llargada_camal < 32 || llargada_camal > 46) {
+                                            System.out.println("(!) Llargada camal no vàlida. Ha d'estar entre 32 i 46.");
+                                        }
+                                    } while (llargada_camal < 32 || llargada_camal > 46);
+                                } else {
+                                    System.out.println("Aquest camp només és per pantalons.");
+                                }
+                                break;
+
+                            case 7:
+                                preu_base = llegirDouble("Nou preu base: ");
+                                break;
+
+                            case 8:
+                                do {
+                                    iva = llegirEnter("Nou IVA: ");
+                                    if (iva < 4 || iva > 21) {
+                                        System.out.println("(!) IVA no vàlid. Ha d'estar entre 4 i 21.");
+                                    }
+                                } while (iva < 4 || iva > 21);
+                                break;
+
+                            case 9:
+                                do {
+                                    stock = llegirEnter("Nou stock: ");
+                                    if (stock < 0) {
+                                        System.out.println("(!) Stock no vàlid. No pot ser negatiu.");
+                                    }
+                                } while (stock < 0);
+                                break;
+
+                            case 0:
+                                break;
+
+                            default:
+                                System.out.println("Opció no vàlida.");
+                        }
+
+                        if (opcio >= 1 && opcio <= 9) {
+                            int estat = db.actualitzarArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+
+                            if (estat == 1) {
+                                System.out.println("Article modificat correctament.");
+                            } else {
+                                System.out.println("No s'ha pogut modificar l'article.");
+                            }
+                        }
+
+                    } while (opcio != 0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -242,10 +396,12 @@ public class App {
 
     public void consultarArticle() {
         System.out.println("\n--- CONSULTAR ARTICLE ---");
-
         int id = llegirEnter("ID article: ");
         System.out.println("----------------");
+        consultarArticlePerID(id);
+    }
 
+    public void consultarArticlePerID(int id) {
         try {
             ResultSet rs = db.consultaArticlePerId(id);
 
