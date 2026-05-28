@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS tpv_botiga;
 
 -- Crear base de dades
 CREATE DATABASE tpv_botiga;
-USE tpv_botiga;
+USE tpv_botiga;1
 
 -- =========================
 -- TAULA FAMILIES
@@ -19,7 +19,7 @@ INSERT INTO families (nom) VALUES ('camisa'), ('pantaló');
 -- TAULA ARTICLES
 -- =========================
 CREATE TABLE articles (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     id_familia INT NOT NULL,
 
