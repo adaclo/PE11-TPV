@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS tpv_botiga;
 
 -- Crear base de dades
 CREATE DATABASE tpv_botiga;
-USE tpv_botiga;1
+USE tpv_botiga;
 
 -- =========================
 -- TAULA FAMILIES

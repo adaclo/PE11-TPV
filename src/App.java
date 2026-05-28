@@ -106,7 +106,15 @@ public class App {
         System.out.println("\n--- ALTA ARTICLE ---");
 
         String nom = llegirText("Nom article: ");
-        int id_familia = llegirEnter("ID familia (1 camisa, 2 pantaló): ");
+
+        int id_familia = 0;
+
+        do {
+            id_familia = llegirEnter("ID familia (1 camisa, 2 pantaló): ");
+            if (id_familia != 1 && id_familia != 2) {
+                System.out.println("(!) ID familia no vàlid. Introdueix 1 per camisa o 2 per pantaló.");
+            }
+        } while (id_familia != 1 && id_familia != 2);
 
         Integer talla_coll = null;
         Integer amplada_pit = null;
@@ -114,18 +122,56 @@ public class App {
         Integer llargada_camal = null;
 
         if (id_familia == 1) {
-            talla_coll = llegirEnter("Talla coll: ");
-            amplada_pit = llegirEnter("Amplada pit: ");
+            do {
+                talla_coll = llegirEnter("Talla coll: ");
+                if (talla_coll < 36 || talla_coll > 52) {
+                    System.out.println("(!) Talla coll no vàlida. Ha d'estar entre 36 i 52.");
+                }
+            } while (talla_coll < 36 || talla_coll > 52);
+
+            do {
+                amplada_pit = llegirEnter("Amplada pit: ");
+                if (amplada_pit < 10 || amplada_pit > 15) {
+                    System.out.println("(!) Amplada pit no vàlida. Ha d'estar entre 10 i 15.");
+                }
+            } while (amplada_pit < 10 || amplada_pit > 15);
         }
 
         if (id_familia == 2) {
-            talla_cintura = llegirEnter("Talla cintura: ");
-            llargada_camal = llegirEnter("Llargada camal: ");
+            do {
+                talla_cintura = llegirEnter("Talla cintura: ");
+                if (talla_cintura < 24 || talla_cintura > 56) {
+                    System.out.println("(!) Talla cintura no vàlida. Ha d'estar entre 24 i 56.");
+                }
+            } while (talla_cintura < 24 || talla_cintura > 56);
+
+            do {
+                llargada_camal = llegirEnter("Llargada camal: ");
+                if (llargada_camal < 32 || llargada_camal > 46) {
+                    System.out.println("(!) Llargada camal no vàlida. Ha d'estar entre 32 i 46.");
+                }
+            } while (llargada_camal < 32 || llargada_camal > 46);
         }
 
         double preu_base = llegirDouble("Preu base: ");
-        int iva = llegirEnter("IVA: ");
-        int stock = llegirEnter("Stock: ");
+
+        int iva = 0;
+
+        do {
+            iva = llegirEnter("IVA: ");
+            if (iva < 4 || iva > 21) {
+                System.out.println("(!) IVA no vàlid. Ha d'estar entre 4 i 21.");
+            }
+        } while (iva < 4 || iva > 21);
+
+        int stock = 0;
+
+        do {
+            stock = llegirEnter("Stock: ");
+            if (stock < 0) {
+                System.out.println("(!) Stock no vàlid. No pot ser negatiu.");
+            }
+        } while (stock < 0);
 
         int estat = db.inserirArticleAuto(nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
 
@@ -198,6 +244,7 @@ public class App {
         System.out.println("\n--- CONSULTAR ARTICLE ---");
 
         int id = llegirEnter("ID article: ");
+        System.out.println("----------------");
 
         try {
             ResultSet rs = db.consultaArticlePerId(id);
