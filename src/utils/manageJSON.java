@@ -18,7 +18,7 @@ public class manageJSON {
     public void carregarJSON() {
         JSONParser parser = new JSONParser();
         try {
-            obj = parser.parse(new FileReader("articles.json"));
+            obj = parser.parse(new FileReader("json/articles.json"));
             articles = (JSONArray) obj;
             System.out.println("(+) JSON carregat correctament");
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import utils.manageJSON;
 import utils.manageDB;
+import java.sql.ResultSet;
 
 public class App {
 
@@ -15,7 +16,7 @@ public class App {
     }
 
     public void inicialitzar() {
-        this.db = new manageDB("botiga_db"); 
+        this.db = new manageDB("tpv_botiga");
         this.db.establirConexio(); 
         this.json = new manageJSON(this.db);
     }
@@ -76,19 +77,19 @@ public class App {
             switch (opcio) {
 
                 case 1:
-                    System.out.println("Alta article...");
+                    altaArticle();
                     break;
 
                 case 2:
-                    System.out.println("Modificar article...");
+                    modificarArticle();
                     break;
 
                 case 3:
-                    System.out.println("Esborrar article...");
+                    esborrarArticle();
                     break;
 
                 case 4:
-                    System.out.println("Consultar articles...");
+                    consultarArticle();
                     break;
 
                 case 0:
@@ -99,6 +100,126 @@ public class App {
             }
 
         } while (opcio != 0);
+    }
+
+    public void altaArticle() {
+        System.out.println("\n--- ALTA ARTICLE ---");
+
+        String nom = llegirText("Nom article: ");
+        int id_familia = llegirEnter("ID familia (1 camisa, 2 pantaló): ");
+
+        Integer talla_coll = null;
+        Integer amplada_pit = null;
+        Integer talla_cintura = null;
+        Integer llargada_camal = null;
+
+        if (id_familia == 1) {
+            talla_coll = llegirEnter("Talla coll: ");
+            amplada_pit = llegirEnter("Amplada pit: ");
+        }
+
+        if (id_familia == 2) {
+            talla_cintura = llegirEnter("Talla cintura: ");
+            llargada_camal = llegirEnter("Llargada camal: ");
+        }
+
+        double preu_base = llegirDouble("Preu base: ");
+        int iva = llegirEnter("IVA: ");
+        int stock = llegirEnter("Stock: ");
+
+        int estat = db.inserirArticleAuto(nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+
+        if (estat == 1) {
+            System.out.println("Article inserit correctament.");
+        } else {
+            System.out.println("No s'ha pogut inserir l'article.");
+        }
+    }
+
+    public void modificarArticle() {
+        System.out.println("\n--- MODIFICAR ARTICLE ---");
+
+        int id = llegirEnter("ID article a modificar: ");
+
+        if (!db.existeixArticle(id)) {
+            System.out.println("No existeix cap article amb aquest ID.");
+        } else {
+            String nom = llegirText("Nou nom article: ");
+            int id_familia = llegirEnter("Nou ID familia (1 camisa, 2 pantaló): ");
+
+            Integer talla_coll = null;
+            Integer amplada_pit = null;
+            Integer talla_cintura = null;
+            Integer llargada_camal = null;
+
+            if (id_familia == 1) {
+                talla_coll = llegirEnter("Nova talla coll: ");
+                amplada_pit = llegirEnter("Nova amplada pit: ");
+            }
+
+            if (id_familia == 2) {
+                talla_cintura = llegirEnter("Nova talla cintura: ");
+                llargada_camal = llegirEnter("Nova llargada camal: ");
+            }
+
+            double preu_base = llegirDouble("Nou preu base: ");
+            int iva = llegirEnter("Nou IVA: ");
+            int stock = llegirEnter("Nou stock: ");
+
+            int estat = db.actualitzarArticle(id, nom, id_familia, talla_coll, amplada_pit, talla_cintura, llargada_camal, preu_base, iva, stock);
+
+            if (estat == 1) {
+                System.out.println("Article modificat correctament.");
+            } else {
+                System.out.println("No s'ha pogut modificar l'article.");
+            }
+        }
+    }
+
+    public void esborrarArticle() {
+        System.out.println("\n--- ESBORRAR ARTICLE ---");
+
+        int id = llegirEnter("ID article a esborrar: ");
+
+        if (!db.existeixArticle(id)) {
+            System.out.println("No existeix cap article amb aquest ID.");
+        } else {
+            int estat = db.eliminarArticle(id);
+
+            if (estat == 1) {
+                System.out.println("Article esborrat correctament.");
+            } else {
+                System.out.println("No s'ha pogut esborrar l'article.");
+            }
+        }
+    }
+
+    public void consultarArticle() {
+        System.out.println("\n--- CONSULTAR ARTICLE ---");
+
+        int id = llegirEnter("ID article: ");
+
+        try {
+            ResultSet rs = db.consultaArticlePerId(id);
+
+            if (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id"));
+                System.out.println("Nom: " + rs.getString("nom"));
+                System.out.println("ID familia: " + rs.getInt("id_familia"));
+                System.out.println("Familia: " + rs.getString("nom_familia"));
+                System.out.println("Talla coll: " + rs.getObject("talla_coll"));
+                System.out.println("Amplada pit: " + rs.getObject("amplada_pit"));
+                System.out.println("Talla cintura: " + rs.getObject("talla_cintura"));
+                System.out.println("Llargada camal: " + rs.getObject("llargada_camal"));
+                System.out.println("Preu base: " + rs.getDouble("preu_base"));
+                System.out.println("IVA: " + rs.getInt("iva"));
+                System.out.println("Stock: " + rs.getInt("stock"));
+            } else {
+                System.out.println("No existeix cap article amb aquest ID.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void menuGestioClients() {
@@ -174,36 +295,41 @@ public class App {
         System.out.println("Recompra automàtica...");
     }
 
-    public int llegirEnter(String missatge) {
-    int numero = 0;
-    boolean esValid = false;
+    public String llegirText(String missatge) {
+        System.out.print(missatge);
+        return sc.nextLine();
+    }
 
-    while (!esValid) {
-        try {
-            System.out.print(missatge);
-            String input = sc.nextLine();
-            numero = Integer.parseInt(input);
-            esValid = true; // Si arribem aquí, el número és correcte
-        } catch (NumberFormatException e) {
-            System.out.println("ERROR: Has d'introduir un número sencer vàlid.");
-        }
+    public int llegirEnter(String missatge) {
+        int numero = 0;
+        boolean esValid = false;
+
+        while (!esValid) {
+            try {
+                System.out.print(missatge);
+                String input = sc.nextLine();
+                numero = Integer.parseInt(input);
+                esValid = true; // Si arribem aquí, el número és correcte
+            } catch (NumberFormatException e) {
+                System.out.println("ERROR: Has d'introduir un número sencer vàlid.");
+            }
         }
         return numero;
     }
 
     public double llegirDouble(String missatge) {
-    double numero = 0;
-    boolean esValid = false;
+        double numero = 0;
+        boolean esValid = false;
 
-    while (!esValid) {
-        try {
-            System.out.print(missatge);
-            String input = sc.nextLine().replace(',', '.'); // Accepta tant punts com comes
-            numero = Double.parseDouble(input);
-            esValid = true;
-        } catch (NumberFormatException e) {
-            System.out.println("ERROR: Introdueix un valor decimal correcte (Ex: 10.50).");
-        }
+        while (!esValid) {
+            try {
+                System.out.print(missatge);
+                String input = sc.nextLine().replace(',', '.'); // Accepta tant punts com comes
+                numero = Double.parseDouble(input);
+                esValid = true;
+            } catch (NumberFormatException e) {
+                System.out.println("ERROR: Introdueix un valor decimal correcte (Ex: 10.50).");
+            }
         }
         return numero;
     }
