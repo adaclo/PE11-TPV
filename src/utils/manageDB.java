@@ -112,30 +112,6 @@ public class manageDB {
         }
         return existeix;
     }
-
-    // Consultar totes les camises de la base de dades
-    public ResultSet consultaCamises() {
-        ResultSet rs = null;
-        try {
-            Statement stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT articles.id, articles.nom, articles.id_familia, families.nom AS nom_familia, articles.talla_coll, articles.amplada_pit, articles.preu_base, articles.iva, articles.stock FROM articles JOIN families ON articles.id_familia = families.id WHERE families.nom = 'camisa'");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return rs;
-    }
-
-    // Consultar tots els pantalons de la base de dades
-    public ResultSet consultaPantalons() {
-        ResultSet rs = null;
-        try {
-            Statement stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT articles.id, articles.nom, articles.id_familia, families.nom AS nom_familia, articles.talla_cintura, articles.llargada_camal, articles.preu_base, articles.iva, articles.stock FROM articles JOIN families ON articles.id_familia = families.id WHERE families.nom = 'pantaló'");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return rs;
-    }
     
     // Consultar totes les families de la base de dades
     public ResultSet consultaFamilies() {
@@ -167,26 +143,6 @@ public class manageDB {
             e.printStackTrace();
         }
         return id;
-    }
-
-    // Consultar el nom d'una familia pel seu id
-    public String consultaNomFamilia(int id_familia) {
-        ResultSet rs = null;
-        String nom = "";
-        try {
-            PreparedStatement ps = conn.prepareStatement("SELECT nom FROM families WHERE id = ?");
-
-            ps.setInt(1, id_familia);
-
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                nom = rs.getString("nom");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return nom;
     }
 
     // Consultar tots els tiquets de la base de dades
