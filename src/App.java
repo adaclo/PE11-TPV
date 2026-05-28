@@ -240,19 +240,19 @@ public class App {
             switch (opcio) {
 
                 case 1:
-                    System.out.println("Alta client...");
+                    altaClient();
                     break;
 
                 case 2:
-                    System.out.println("Modificar client...");
+                    modificarClient();
                     break;
 
                 case 3:
-                    System.out.println("Esborrar client...");
+                    esborrarClient();
                     break;
 
                 case 4:
-                    System.out.println("Consultar clients...");
+                    consultarClients();
                     break;
 
                 case 0:
@@ -265,6 +265,68 @@ public class App {
         } while (opcio != 0);
     }
 
+    private void altaClient() {
+        System.out.println("\n--- ALTA NOU CLIENT ---");
+        String dni = llegirText("DNI: ");
+        if (db.existeixClient(dni)) {
+            System.out.println("Error: Ja existeix un client amb aquest DNI.");
+            return;
+        }
+        String nom = llegirText("Nom: ");
+        String email = llegirText("Email: ");
+        String tel = llegirText("Telèfon (9 dígits): ");
+
+        int estat = db.inserirClient(dni, nom, email, tel);
+        if (estat == 1) System.out.println("Client registrat correctament.");
+        else System.out.println("Error en registrar el client.");
+    }
+
+    private void modificarClient() {
+        System.out.println("\n--- MODIFICAR CLIENT ---");
+        String dni = llegirText("Introdueix el DNI del client a modificar: ");
+    
+        if (!db.existeixClient(dni)) {
+            System.out.println("Aquest client no existeix.");
+            return;
+        }
+
+        String nouNom = llegirText("Nou Nom: ");
+        String nouEmail = llegirText("Nou Email: ");
+        String nouTel = llegirText("Nou Telèfon: ");
+
+        int estat = db.actualitzarClient(dni, nouNom, nouEmail, nouTel);
+        if (estat == 1) System.out.println("Dades actualitzades.");
+        else System.out.println("Error en l'actualització.");
+    }
+
+    private void esborrarClient() {
+        String dni = llegirText("DNI del client a esborrar: ");
+        if (dni.equals("000")) {
+            System.out.println("No es pot esborrar el client genèric.");
+            return;
+        }
+    
+        int estat = db.eliminarClient(dni);
+        if (estat == 1) System.out.println("Client eliminat.");
+        else System.out.println("Error: Potser el client té tiquets associats.");
+    }
+
+    private void consultarClients() {
+        System.out.println("\n--- LLISTAT DE CLIENTS ---");
+        try (java.sql.ResultSet rs = db.consultaClients()) {
+            System.out.printf("%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELÈFON");
+            System.out.println("---------------------------------------------------------------------------");
+            while (rs != null && rs.next()) {
+                System.out.printf("%-10s | %-20s | %-25s | %-10s\n", 
+                    rs.getString("dni"), 
+                    rs.getString("nom"), 
+                    rs.getString("email"), 
+                    rs.getString("telefon"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error al llistar: " + e.getMessage());
+        }
+    }
 
     public void importarArticles() {
         System.out.println("\n--- PROCÉS D'IMPORTACIÓ ---");
