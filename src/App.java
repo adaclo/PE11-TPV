@@ -267,37 +267,98 @@ public class App {
 
     private void altaClient() {
         System.out.println("\n--- ALTA NOU CLIENT ---");
-        String dni = llegirText("DNI: ");
+    
+        String dni;
+        while (true) {
+            dni = llegirText("DNI (8 números i 1 lletra): ");
+            if (dni.matches("^[0-9]{8}[A-Z]$") || dni.equals("000")) break;
+            System.out.println("ERROR: El format del DNI no és vàlid (Ex: 12345678Z).");
+        }
+
         if (db.existeixClient(dni)) {
             System.out.println("Error: Ja existeix un client amb aquest DNI.");
             return;
         }
-        String nom = llegirText("Nom: ");
-        String email = llegirText("Email: ");
-        String tel = llegirText("Telèfon (9 dígits): ");
 
+        String nom;
+        while (true) {
+            nom = llegirText("Nom (màxim 30 caràcters): ");
+            if (nom.length() > 0 && nom.length() <= 30) break;
+            System.out.println("ERROR: El nom ha de tenir entre 1 i 30 caràcters.");
+        }
+
+        String email = llegirText("Email: ");
+
+        String tel;
+        while (true) {
+            tel = llegirText("Telèfon (9 dígits): ");
+        
+            if (tel.matches("^[0-9]{9}$")) {
+                break;
+            } else {
+                System.out.println("ERROR: El telèfon ha de tenir exactament 9 números i cap lletra.");
+            }
+        }
         int estat = db.inserirClient(dni, nom, email, tel);
-        if (estat == 1) System.out.println("Client registrat correctament.");
-        else System.out.println("Error en registrar el client.");
+
+        if (estat == 1) {System.out.println("Client registrat correctament.");}
+        else {System.out.println("Error en registrar el client.");}
     }
 
     private void modificarClient() {
         System.out.println("\n--- MODIFICAR CLIENT ---");
         String dni = llegirText("Introdueix el DNI del client a modificar: ");
     
-        if (!db.existeixClient(dni)) {
-            System.out.println("Aquest client no existeix.");
-            return;
+        try {
+            ResultSet rs = db.consultaClientPerDni(dni);
+            if (!rs.next()) {
+                System.out.println("Aquest client no existeix.");
+                return;
+            }
+
+            // Guardem les dades actuals per si no es volen canviar totes
+            String nomAct = rs.getString("nom");
+            String emailAct = rs.getString("email");
+            String telAct = rs.getString("telefon");
+
+            int opcioMod;
+            do {
+                System.out.println("\nClient: " + nomAct + " [" + dni + "]");
+                System.out.println("1. Modificar NOM (Actual: " + nomAct + ")");
+                System.out.println("2. Modificar EMAIL (Actual: " + emailAct + ")");
+                System.out.println("3. Modificar TELÈFON (Actual: " + telAct + ")");
+                System.out.println("4. Modificar-ho TOT");
+                System.out.println("0. Tornar / Finalitzar");
+                opcioMod = llegirEnter("Què vols fer?: ");
+
+                switch (opcioMod) {
+                    case 1:
+                        nomAct = llegirText("Nou Nom: ");
+                        db.actualitzarClient(dni, nomAct, emailAct, telAct);
+                        break;
+                    case 2:
+                        emailAct = llegirText("Nou Email: ");
+                        db.actualitzarClient(dni, nomAct, emailAct, telAct);
+                        break;
+                    case 3:
+                        telAct = llegirText("Nou Telèfon: ");
+                        db.actualitzarClient(dni, nomAct, emailAct, telAct);
+                        break;
+                    case 4:
+                        nomAct = llegirText("Nou Nom: ");
+                        emailAct = llegirText("Nou Email: ");
+                        telAct = llegirText("Nou Telèfon: ");
+                        db.actualitzarClient(dni, nomAct, emailAct, telAct);
+                        break;
+                }
+                if (opcioMod >= 1 && opcioMod <= 4) System.out.println("Canvi realitzat.");
+                
+            } while (opcioMod != 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        String nouNom = llegirText("Nou Nom: ");
-        String nouEmail = llegirText("Nou Email: ");
-        String nouTel = llegirText("Nou Telèfon: ");
-
-        int estat = db.actualitzarClient(dni, nouNom, nouEmail, nouTel);
-        if (estat == 1) System.out.println("Dades actualitzades.");
-        else System.out.println("Error en l'actualització.");
-    }
+}
 
     private void esborrarClient() {
         String dni = llegirText("DNI del client a esborrar: ");
@@ -312,19 +373,37 @@ public class App {
     }
 
     private void consultarClients() {
-        System.out.println("\n--- LLISTAT DE CLIENTS ---");
-        try (java.sql.ResultSet rs = db.consultaClients()) {
-            System.out.printf("%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELÈFON");
+        int opcio;
+            System.out.println("\n--- CONSULTAR CLIENTS ---");
+            System.out.println("1. Consultar UN client (per DNI)");
+            System.out.println("2. Consultar TOTS els clients");
+            System.out.println("0. Tornar");
+            opcio = llegirEnter("Opció: ");
+
+            if (opcio == 1) {
+                String dni = llegirText("Introdueix DNI: ");
+                mostrarTaulaClients(db.consultaClientPerDni(dni));
+            } else if (opcio == 2) {
+                mostrarTaulaClients(db.consultaClients());
+            }
+    }
+
+    private void mostrarTaulaClients(ResultSet rs) {
+        try {
+            System.out.printf("\n%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELÈFON");
             System.out.println("---------------------------------------------------------------------------");
+            boolean hihaDades = false;
             while (rs != null && rs.next()) {
+                hihaDades = true;
                 System.out.printf("%-10s | %-20s | %-25s | %-10s\n", 
                     rs.getString("dni"), 
                     rs.getString("nom"), 
                     rs.getString("email"), 
                     rs.getString("telefon"));
             }
+            if (!hihaDades) System.out.println("No s'han trobat resultats.");
         } catch (Exception e) {
-            System.out.println("Error al llistar: " + e.getMessage());
+            System.out.println("Error al mostrar dades: " + e.getMessage());
         }
     }
 
