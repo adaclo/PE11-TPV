@@ -725,6 +725,27 @@ public class App {
         }
     }
 
+    public void imprimirTiquet(int id_tiquet, String dni_client, int[] ids_articles, int[] quantitats, double[] preus_base, int[] ives, double[] preus_finals, int comptador, double total_base, double total_iva, double total_final) {
+        System.out.println("\n========== TIQUET ==========");
+        System.out.println("Tiquet: " + id_tiquet);
+        System.out.println("Client: " + dni_client);
+        System.out.println("----------------------------");
+
+        for (int i = 0; i < comptador; i++) {
+            System.out.println("Article ID: " + ids_articles[i]);
+            System.out.println("Quantitat: " + quantitats[i]);
+            System.out.println("Base: " + preus_base[i]);
+            System.out.println("IVA: " + ives[i] + "%");
+            System.out.println("Final: " + preus_finals[i]);
+            System.out.println("----------------------------");
+        }
+
+        System.out.println("Total base: " + total_base);
+        System.out.println("Total IVA: " + total_iva);
+        System.out.println("Total final: " + total_final);
+        System.out.println("============================\n");
+    }
+
     public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
         double total_base = preu_base * quantitat;
         double total_iva = total_base * iva / 100;
