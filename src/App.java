@@ -623,6 +623,19 @@ public class App {
         System.out.println("TPV...");
     }
 
+    public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
+        double total_base = preu_base * quantitat;
+        double total_iva = total_base * iva / 100;
+        double total_final = total_base + total_iva;
+        return total_final;
+    }
+
+    public double calcularIva(double preu_base, int iva, int quantitat) {
+        double total_base = preu_base * quantitat;
+        double total_iva = total_base * iva / 100;
+        return total_iva;
+    }
+
     public void consultaVendesClient() {
         System.out.println("Consulta vendes client...");
     }
