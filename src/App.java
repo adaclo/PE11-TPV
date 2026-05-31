@@ -620,7 +620,16 @@ public class App {
     }
 
     public void tpv() {
-        System.out.println("TPV...");
+        System.out.println("\n--- TPV ---");
+
+        String dni_client = llegirText("DNI client: ");
+
+        if (!db.existeixClient(dni_client)) {
+            System.out.println("Client no trobat. S'utilitzarà el client genèric 000.");
+            dni_client = "000";
+        }
+
+        System.out.println("Client seleccionat: " + dni_client);
     }
 
     public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
