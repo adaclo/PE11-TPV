@@ -638,6 +638,10 @@ public class App {
         int comptador = 0;
         int id_article = -1;
 
+        double total_base = 0;
+        double total_iva = 0;
+        double total_final = 0;
+
         do {
             id_article = llegirEnter("ID article (0 per finalitzar): ");
 
@@ -661,15 +665,22 @@ public class App {
                                 ResultSet rs = db.consultaArticlePerId(id_article);
 
                                 if (rs.next()) {
-                                    double preu_base = rs.getDouble("preu_base");
-                                    int iva = rs.getInt("iva");
-                                    double preu_final = calcularPreuFinal(preu_base, iva, quantitat);
+                                    double preu_article = rs.getDouble("preu_base");
+                                    int iva_article = rs.getInt("iva");
+
+                                    double linia_base = preu_article * quantitat;
+                                    double linia_iva = calcularIva(preu_article, iva_article, quantitat);
+                                    double linia_final = calcularPreuFinal(preu_article, iva_article, quantitat);
 
                                     ids_articles[comptador] = id_article;
                                     quantitats[comptador] = quantitat;
-                                    preus_base[comptador] = preu_base * quantitat;
-                                    ives[comptador] = iva;
-                                    preus_finals[comptador] = preu_final;
+                                    preus_base[comptador] = linia_base;
+                                    ives[comptador] = iva_article;
+                                    preus_finals[comptador] = linia_final;
+
+                                    total_base = total_base + linia_base;
+                                    total_iva = total_iva + linia_iva;
+                                    total_final = total_final + linia_final;
 
                                     comptador++;
 
@@ -685,7 +696,33 @@ public class App {
 
         } while (id_article != 0);
 
-        System.out.println("Articles afegits: " + comptador);
+        if (comptador == 0) {
+            System.out.println("No s'ha registrat cap venda.");
+        } else {
+            int confirmar = llegirEnter("Confirmar venda? (1 sí, 0 no): ");
+
+            if (confirmar == 1) {
+                java.time.LocalDate avui = java.time.LocalDate.now();
+
+                int estatTiquet = db.inserirTiquet(avui.toString(), dni_client, total_base, total_iva, total_final);
+
+                if (estatTiquet == 1) {
+                    int id_tiquet = db.consultaUltimTiquet();
+
+                    for (int i = 0; i < comptador; i++) {
+                        db.inserirLiniaFactura(id_tiquet, ids_articles[i], quantitats[i], preus_base[i], ives[i], preus_finals[i]);
+                        db.restarStockArticle(ids_articles[i], quantitats[i]);
+                    }
+
+                    System.out.println("Venda registrada correctament.");
+                    imprimirTiquet(id_tiquet, dni_client, ids_articles, quantitats, preus_base, ives, preus_finals, comptador, total_base, total_iva, total_final);
+                } else {
+                    System.out.println("No s'ha pogut registrar el tiquet.");
+                }
+            } else {
+                System.out.println("Venda cancel·lada.");
+            }
+        }
     }
 
     public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
