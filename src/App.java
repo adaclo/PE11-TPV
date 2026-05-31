@@ -752,6 +752,37 @@ public class App {
         System.out.println("============================\n");
     }
 
+    public void imprimirTiquetRecuperat() {
+        int idTiquet = llegirEnter("Introdueix l'ID del tiquet a imprimir: ");
+        
+        try {
+            ResultSet rs = db.consultaLiniesTiquet(idTiquet); // El mètode que hem creat abans al manageDB
+            
+            System.out.println("\n==========================================");
+            System.out.println("        REIMPRESSIÓ TIQUET Nº: " + idTiquet);
+            System.out.println("==========================================");
+            System.out.printf("%-20s %-10s %-10s\n", "ARTICLE", "QUANT.", "PREU");
+            System.out.println("------------------------------------------");
+
+            boolean trobat = false;
+            while (rs.next()) {
+                trobat = true;
+                System.out.printf("%-20s %-10d %-10.2f€\n", 
+                    rs.getString("nom"), 
+                    rs.getInt("quantitat"), 
+                    rs.getDouble("preu_final"));
+            }
+
+            if (!trobat) {
+                System.out.println("No s'han trobat línies per a aquest tiquet.");
+            }
+            System.out.println("==========================================\n");
+
+        } catch (Exception e) {
+            System.out.println("Error recuperant el tiquet: " + e.getMessage());
+        }
+    }
+
     public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
         double total_base = preu_base * quantitat;
         double total_iva = total_base * iva / 100;
