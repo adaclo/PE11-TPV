@@ -629,7 +629,63 @@ public class App {
             dni_client = "000";
         }
 
-        System.out.println("Client seleccionat: " + dni_client);
+        int[] ids_articles = new int[100];
+        int[] quantitats = new int[100];
+        double[] preus_base = new double[100];
+        int[] ives = new int[100];
+        double[] preus_finals = new double[100];
+
+        int comptador = 0;
+        int id_article = -1;
+
+        do {
+            id_article = llegirEnter("ID article (0 per finalitzar): ");
+
+            if (id_article != 0) {
+                if (!db.existeixArticle(id_article)) {
+                    System.out.println("No existeix cap article amb aquest ID.");
+                } else {
+                    int stock_actual = db.consultaStockArticle(id_article);
+
+                    if (stock_actual <= 0) {
+                        System.out.println("Aquest article no té stock disponible.");
+                    } else {
+                        int quantitat = llegirEnter("Quantitat: ");
+
+                        if (quantitat <= 0) {
+                            System.out.println("La quantitat ha de ser superior a 0.");
+                        } else if (quantitat > stock_actual) {
+                            System.out.println("No hi ha prou stock. Stock actual: " + stock_actual);
+                        } else {
+                            try {
+                                ResultSet rs = db.consultaArticlePerId(id_article);
+
+                                if (rs.next()) {
+                                    double preu_base = rs.getDouble("preu_base");
+                                    int iva = rs.getInt("iva");
+                                    double preu_final = calcularPreuFinal(preu_base, iva, quantitat);
+
+                                    ids_articles[comptador] = id_article;
+                                    quantitats[comptador] = quantitat;
+                                    preus_base[comptador] = preu_base * quantitat;
+                                    ives[comptador] = iva;
+                                    preus_finals[comptador] = preu_final;
+
+                                    comptador++;
+
+                                    System.out.println("Article afegit a la venda.");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+
+        } while (id_article != 0);
+
+        System.out.println("Articles afegits: " + comptador);
     }
 
     public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
