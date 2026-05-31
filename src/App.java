@@ -768,7 +768,51 @@ public class App {
     }
 
     public void calcularBeneficis() {
-        System.out.println("Calculant beneficis...");
+        System.out.println("\n--- CÀLCUL DE BENEFICIS ---");
+
+        int opcio = 0;
+        String ordre = "DESC";
+
+        do {
+            System.out.println("1. Ordenar beneficis de major a menor");
+            System.out.println("2. Ordenar beneficis de menor a major");
+            opcio = llegirEnter("Opció: ");
+
+            if (opcio != 1 && opcio != 2) {
+                System.out.println("Opció no vàlida.");
+            }
+        } while (opcio != 1 && opcio != 2);
+
+        if (opcio == 1) {
+            ordre = "DESC";
+        }
+
+        if (opcio == 2) {
+            ordre = "ASC";
+        }
+
+        try {
+            ResultSet rs = db.consultaBeneficisArticles(ordre);
+
+            System.out.println("\n--- INFORME DE BENEFICIS ---");
+
+            while (rs.next()) {
+                System.out.println("--------------------------------");
+                System.out.println("ID article: " + rs.getInt("id"));
+                System.out.println("Nom: " + rs.getString("nom"));
+                System.out.println("Família: " + rs.getString("familia"));
+                System.out.println("Preu base: " + rs.getDouble("preu_base"));
+                System.out.println("Quantitat venuda: " + rs.getInt("quantitat_venuda"));
+                System.out.println("Preu cost unitari: " + rs.getDouble("preu_cost"));
+                System.out.println("Total vendes sense IVA: " + rs.getDouble("total_vendes"));
+                System.out.println("Benefici: " + rs.getDouble("benefici"));
+            }
+
+            System.out.println("--------------------------------");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void recompraAutomatica() {
