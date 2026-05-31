@@ -592,23 +592,29 @@ public class App {
     }
 
     private void mostrarTaulaClients(ResultSet rs) {
-        try {
-            System.out.printf("\n%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELÈFON");
-            System.out.println("---------------------------------------------------------------------------");
-            boolean hihaDades = false;
-            while (rs != null && rs.next()) {
-                hihaDades = true;
-                System.out.printf("%-10s | %-20s | %-25s | %-10s\n", 
-                    rs.getString("dni"), 
-                    rs.getString("nom"), 
-                    rs.getString("email"), 
-                    rs.getString("telefon"));
-            }
-            if (!hihaDades) System.out.println("No s'han trobat resultats.");
-        } catch (Exception e) {
-            System.out.println("Error al mostrar dades: " + e.getMessage());
+    try {
+        // Capçalera de la taula
+        System.out.printf("\n%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELEFON");
+        System.out.println("---------------------------------------------------------------------------");
+        
+        boolean hiHaDades = false; // Variable corregida (sense espai)
+        
+        while (rs != null && rs.next()) {
+            hiHaDades = true;
+            System.out.printf("%-10s | %-20s | %-25s | %-10s\n",
+                rs.getString("dni"),
+                rs.getString("nom"),
+                rs.getString("email"),
+                rs.getString("telefon"));
         }
+        
+        if (!hiHaDades) {
+            System.out.println("No s'han trobat resultats.");
+        }
+    } catch (Exception e) {
+        System.out.println("Error al mostrar dades: " + e.getMessage());
     }
+}
 
     public void importarArticles() {
         System.out.println("\n--- PROCÉS D'IMPORTACIÓ ---");
