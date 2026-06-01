@@ -1,7 +1,7 @@
-import java.util.Scanner;
-import utils.manageJSON;
-import utils.manageDB;
 import java.sql.ResultSet;
+import java.util.Scanner;
+import utils.manageDB;
+import utils.manageJSON;
 
 public class App {
 
@@ -760,8 +760,35 @@ public class App {
     }
 
     public void consultaVendesClient() {
-        System.out.println("Consulta vendes client...");
+
+    sc.nextLine();
+
+    System.out.println("\n=== CONSULTA VENDES CLIENT ===");
+
+    System.out.print("DNI client: ");
+    String dni = sc.nextLine();
+
+    try {
+
+        ResultSet rs = db.consultaVendesClient(dni);
+
+        if (rs.next()) {
+
+            System.out.println("\nDNI: " + rs.getString("dni"));
+            System.out.println("Nom: " + rs.getString("nom"));
+            System.out.println("Total tiquets: " + rs.getInt("total_tiquets"));
+            System.out.println("Total despesa: " + rs.getDouble("total_despesa") + "€");
+
+        } else {
+
+            System.out.println("No hi ha vendes d'aquest client");
+        }
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
     }
+}
 
     public void consultaVendesArticle() {
         System.out.println("Consulta vendes article...");
