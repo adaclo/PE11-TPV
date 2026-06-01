@@ -796,14 +796,11 @@ public class App {
         return total_iva;
     }
 
-    public void consultaVendesClient() {
+public void consultaVendesClient() {
 
-    sc.nextLine();
+    System.out.println("\n--- CONSULTA VENDES PER CLIENT ---");
 
-    System.out.println("\n=== CONSULTA VENDES CLIENT ===");
-
-    System.out.print("DNI client: ");
-    String dni = sc.nextLine();
+    String dni = llegirText("DNI client: ");
 
     try {
 
@@ -811,14 +808,16 @@ public class App {
 
         if (rs.next()) {
 
-            System.out.println("\nDNI: " + rs.getString("dni"));
-            System.out.println("Nom: " + rs.getString("nom"));
-            System.out.println("Total tiquets: " + rs.getInt("total_tiquets"));
+            System.out.println("--------------------------------");
+            System.out.println("DNI: " + rs.getString("dni"));
+            System.out.println("Nom client: " + rs.getString("nom"));
+            System.out.println("Número tiquets: " + rs.getInt("num_tiquets"));
             System.out.println("Total despesa: " + rs.getDouble("total_despesa") + "€");
+            System.out.println("--------------------------------");
 
         } else {
 
-            System.out.println("No hi ha vendes d'aquest client");
+            System.out.println("No hi ha dades d'aquest client.");
         }
 
     } catch (Exception e) {
@@ -827,8 +826,33 @@ public class App {
     }
 }
 
-    public void consultaVendesArticle() {
-        System.out.println("Consulta vendes article...");
+        public void consultaVendesArticle() {
+
+        System.out.println("\n--- CONSULTA VENDES PER ARTICLE ---");
+
+        int id_article = llegirEnter("ID article: ");
+
+        try {
+
+            ResultSet rs = db.consultaVendesArticle(id_article);
+
+            if (rs.next()) {
+
+                System.out.println("--------------------------------");
+                System.out.println("ID article: " + rs.getInt("id"));
+                System.out.println("Nom article: " + rs.getString("nom"));
+                System.out.println("Quantitat venuda: " + rs.getInt("quantitat_venuda"));
+                System.out.println("--------------------------------");
+
+            } else {
+
+                System.out.println("No hi ha dades d'aquest article.");
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 
     public void calcularBeneficis() {
