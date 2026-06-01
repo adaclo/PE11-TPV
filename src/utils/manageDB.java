@@ -536,6 +536,10 @@ public class manageDB {
     public ResultSet consultaBeneficisArticles(String ordre) {
         ResultSet rs = null;
         try {
+            if (!ordre.equals("ASC") && !ordre.equals("DESC")) {
+                ordre = "DESC";
+            }
+
             PreparedStatement ps = conn.prepareStatement("SELECT articles.id, articles.nom, families.nom AS familia, articles.preu_base, COALESCE(SUM(linies_factura.quantitat), 0) AS quantitat_venuda, CASE WHEN families.nom = 'pantaló' THEN articles.preu_base * 0.30 + articles.llargada_camal * 0.2 WHEN families.nom = 'camisa' THEN articles.preu_base * 0.35 + articles.talla_coll * 0.3 ELSE 0 END AS preu_cost, COALESCE(SUM(linies_factura.preu_base), 0) AS total_vendes, COALESCE(SUM(linies_factura.preu_base), 0) - (COALESCE(SUM(linies_factura.quantitat), 0) * CASE WHEN families.nom = 'pantaló' THEN articles.preu_base * 0.30 + articles.llargada_camal * 0.2 WHEN families.nom = 'camisa' THEN articles.preu_base * 0.35 + articles.talla_coll * 0.3 ELSE 0 END) AS benefici FROM articles JOIN families ON articles.id_familia = families.id LEFT JOIN linies_factura ON linies_factura.id_article = articles.id GROUP BY articles.id, articles.nom, families.nom, articles.preu_base, articles.talla_coll, articles.llargada_camal ORDER BY benefici " + ordre);
 
             rs = ps.executeQuery();
