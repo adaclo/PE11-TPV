@@ -159,4 +159,36 @@ public class manageJSON {
         }
         return num;
     }
+
+    // Mètode nou per exportar la proposta de recompra a un fitxer JSON
+    @SuppressWarnings("unchecked")
+    public void guardarPropostaRecompra(java.util.ArrayList<Integer> ids, java.util.ArrayList<String> noms, java.util.ArrayList<Integer> quantitats) {
+        JSONArray llistaComanda = new JSONArray();
+
+        for (int i = 0; i < ids.size(); i++) {
+            JSONObject articleJson = new JSONObject();
+            // Camps exactes demanats: codi article, nom article, quantitat
+            articleJson.put("codi_article", ids.get(i));
+            articleJson.put("nom_article", noms.get(i));
+            articleJson.put("quantitat", quantitats.get(i));
+            
+            llistaComanda.add(articleJson);
+        }
+
+        // Assegurar que la carpeta 'json' existeix
+        java.io.File carpeta = new java.io.File("json");
+        if (!carpeta.exists()) {
+            carpeta.mkdir();
+        }
+
+        // Guardar el fitxer JSON afegint un timestamp per fer el nom únic
+        String rutaFitxer = "json/proposta_compra_" + System.currentTimeMillis() + ".json";
+        try (java.io.FileWriter file = new java.io.FileWriter(rutaFitxer)) {
+            file.write(llistaComanda.toJSONString());
+            file.flush();
+            System.out.println("\n[OK] Fitxer JSON generat correctament a: " + rutaFitxer);
+        } catch (Exception e) {
+            System.out.println("(!) Error en escriure el fitxer JSON: " + e.getMessage());
+        }
+    }
 }

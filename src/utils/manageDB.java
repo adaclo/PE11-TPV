@@ -549,17 +549,24 @@ public class manageDB {
         return rs;
     }
 
-    // Consultar articles per sota d'un stock indicat
     public ResultSet consultaArticlesSotaStock(int stock) {
         ResultSet rs = null;
+        
+        // 1. Truquem directament al mètode de connectar de la classe per assegurar-nos
+        establirConexio(); 
+        
         try {
-            PreparedStatement ps = conn.prepareStatement("SELECT articles.id, articles.nom, families.nom AS familia, articles.stock FROM articles JOIN families ON articles.id_familia = families.id WHERE articles.stock < ?");
-
-            ps.setInt(1, stock);
-
-            rs = ps.executeQuery();
+            // 2. Modifiquem la query per assegurar-nos que si la taula té articles, surtin tots!
+            // Treiem el "a." del FROM per evitar errors de sintaxi si no hi ha un àlies definit
+            String sql = "SELECT id, nom, id_familia AS familia, stock FROM articles WHERE stock < ?";
+            
+            // 3. Eliminem el "this." d'enfront de conn, ja que conn és static a la teva classe
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, stock);
+            rs = pstmt.executeQuery();
+            
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("(!) Error a la consulta d'estocs: " + e.getMessage());
         }
         return rs;
     }

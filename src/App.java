@@ -910,7 +910,88 @@ public void consultaVendesClient() {
     }
 
     public void recompraAutomatica() {
-        System.out.println("Recompra automàtica...");
+        System.out.println("\n--- PROPOSTA DE RECOMPRA D'ARTICLES ---");
+        
+        // 1. Demanar el llindar d'estoc per teclat
+        int llindar = llegirEnter("Introdueix el llindar d'estoc per fer la proposta: ");
+        
+        try {
+                        // --- AFEGEIX AIXÒ JUST ABANS DE LA CONSULTA ---
+            if (db == null) {
+                db = new manageDB("tpv_botiga");
+            }
+            db.establirConexio(); // Reconnecta automàticament si s'havia tancat o estava a null
+            // ----------------------------------------------
+            // Cridem al mètode de manageDB per obtenir els articles sota el llindar
+            ResultSet rs = db.consultaArticlesSotaStock(llindar);
+            
+            // Estructures temporals per guardar les dades dels articles a comprar
+            java.util.ArrayList<Integer> idsAComprar = new java.util.ArrayList<>();
+            java.util.ArrayList<String> nomsAComprar = new java.util.ArrayList<>();
+            java.util.ArrayList<Integer> quantitatsAComprar = new java.util.ArrayList<>();
+            
+            System.out.println("\nArticles per sota del llindar (" + llindar + "):");
+            System.out.printf("%-10s | %-25s | %-15s | %-10s\n", "CODI", "NOM", "FAMÍLIA", "STOCK ACTUAL");
+            System.out.println("-------------------------------------------------------------------------");
+            
+            boolean hiHaArticles = false;
+            while (rs != null && rs.next()) {
+                hiHaArticles = true;
+                int id = rs.getInt("id");
+                String nom = rs.getString("nom");
+                String familia = rs.getString("familia");
+                int stockActual = rs.getInt("stock");
+                
+                System.out.printf("%-10d | %-25s | %-15s | %-10d\n", id, nom, familia, stockActual);
+                
+                // Demanem de manera interactiva la quantitat a reposar per a cada article
+                int quantitat = llegirEnter("Quantitat a demanar per a '" + nom + "' (0 per descartar): ");
+                if (quantitat > 0) {
+                    idsAComprar.add(id);
+                    nomsAComprar.add(nom);
+                    quantitatsAComprar.add(quantitat);
+                }
+            }
+            
+            // Si no hi ha articles sota el llindar o l'usuari ha posat 0 a tots, cancel·lem
+            if (!hiHaArticles || idsAComprar.isEmpty()) {
+                System.out.println("No s'ha generat cap proposta de compra.");
+                return;
+            }
+            
+            // 2. Mostrar el resum de la proposta de compra generada
+            System.out.println("\n==========================================");
+            System.out.println("          PROPOSTA DE COMPRA GENERADA     ");
+            System.out.println("==========================================");
+            System.out.printf("%-10s %-20s %-10s\n", "CODI", "ARTICLE", "QUANTITAT");
+            System.out.println("------------------------------------------");
+            for (int i = 0; i < idsAComprar.size(); i++) {
+                System.out.printf("%-10d %-20s %-10d\n", idsAComprar.get(i), nomsAComprar.get(i), quantitatsAComprar.get(i));
+            }
+            System.out.println("==========================================");
+            
+            // 3. Demanar confirmació per procedir amb la compra
+            int confirmar = llegirEnter("Confirmar aquesta comanda al majorista? (1 Sí, 0 No): ");
+            
+            if (confirmar == 1) {
+                // A) Actualitzar els stocks a la Base de Dades incrementant la quantitat demanada
+                for (int i = 0; i < idsAComprar.size(); i++) {
+                    db.sumarStockArticle(idsAComprar.get(i), quantitatsAComprar.get(i));
+                }
+                System.out.println("[OK] Stocks actualitzats correctament a la Base de Dades.");
+
+                // B) Delegar la creació i escriptura del fitxer JSON a la classe manageJSON
+                // NOTA: Si la teva variable de manageJSON a App.java no es diu 'json', canvia-la aquí
+                json.guardarPropostaRecompra(idsAComprar, nomsAComprar, quantitatsAComprar);
+                
+            } else {
+                System.out.println("Operació cancel·lada. No s'ha modificat l'estoc ni s'ha generat el JSON.");
+            }
+            
+        } catch (Exception e) {
+            System.out.println("(!) Error en el procés de recompra: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public String llegirText(String missatge) {
