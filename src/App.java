@@ -793,10 +793,12 @@ public class App {
 
         try {
             ResultSet rs = db.consultaBeneficisArticles(ordre);
+            int comptador = 0;
 
             System.out.println("\n--- INFORME DE BENEFICIS ---");
 
             while (rs.next()) {
+                comptador++;
                 System.out.println("--------------------------------");
                 System.out.println("ID article: " + rs.getInt("id"));
                 System.out.println("Nom: " + rs.getString("nom"));
@@ -809,6 +811,10 @@ public class App {
             }
 
             System.out.println("--------------------------------");
+
+            if (comptador == 0) {
+                System.out.println("No hi ha articles per mostrar.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
