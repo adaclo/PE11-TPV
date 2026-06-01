@@ -1,7 +1,7 @@
-import java.util.Scanner;
-import utils.manageJSON;
-import utils.manageDB;
 import java.sql.ResultSet;
+import java.util.Scanner;
+import utils.manageDB;
+import utils.manageJSON;
 
 public class App {
 
@@ -592,23 +592,29 @@ public class App {
     }
 
     private void mostrarTaulaClients(ResultSet rs) {
-        try {
-            System.out.printf("\n%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELÈFON");
-            System.out.println("---------------------------------------------------------------------------");
-            boolean hihaDades = false;
-            while (rs != null && rs.next()) {
-                hihaDades = true;
-                System.out.printf("%-10s | %-20s | %-25s | %-10s\n", 
-                    rs.getString("dni"), 
-                    rs.getString("nom"), 
-                    rs.getString("email"), 
-                    rs.getString("telefon"));
-            }
-            if (!hihaDades) System.out.println("No s'han trobat resultats.");
-        } catch (Exception e) {
-            System.out.println("Error al mostrar dades: " + e.getMessage());
+    try {
+        // Capçalera de la taula
+        System.out.printf("\n%-10s | %-20s | %-25s | %-10s\n", "DNI", "NOM", "EMAIL", "TELEFON");
+        System.out.println("---------------------------------------------------------------------------");
+        
+        boolean hiHaDades = false; // Variable corregida (sense espai)
+        
+        while (rs != null && rs.next()) {
+            hiHaDades = true;
+            System.out.printf("%-10s | %-20s | %-25s | %-10s\n",
+                rs.getString("dni"),
+                rs.getString("nom"),
+                rs.getString("email"),
+                rs.getString("telefon"));
         }
+        
+        if (!hiHaDades) {
+            System.out.println("No s'han trobat resultats.");
+        }
+    } catch (Exception e) {
+        System.out.println("Error al mostrar dades: " + e.getMessage());
     }
+}
 
     public void importarArticles() {
         System.out.println("\n--- PROCÉS D'IMPORTACIÓ ---");
@@ -746,6 +752,37 @@ public class App {
         System.out.println("============================\n");
     }
 
+    public void imprimirTiquetRecuperat() {
+        int idTiquet = llegirEnter("Introdueix l'ID del tiquet a imprimir: ");
+        
+        try {
+            ResultSet rs = db.consultaLiniesTiquet(idTiquet); // El mètode que hem creat abans al manageDB
+            
+            System.out.println("\n==========================================");
+            System.out.println("        REIMPRESSIÓ TIQUET Nº: " + idTiquet);
+            System.out.println("==========================================");
+            System.out.printf("%-20s %-10s %-10s\n", "ARTICLE", "QUANT.", "PREU");
+            System.out.println("------------------------------------------");
+
+            boolean trobat = false;
+            while (rs.next()) {
+                trobat = true;
+                System.out.printf("%-20s %-10d %-10.2f€\n", 
+                    rs.getString("nom"), 
+                    rs.getInt("quantitat"), 
+                    rs.getDouble("preu_final"));
+            }
+
+            if (!trobat) {
+                System.out.println("No s'han trobat línies per a aquest tiquet.");
+            }
+            System.out.println("==========================================\n");
+
+        } catch (Exception e) {
+            System.out.println("Error recuperant el tiquet: " + e.getMessage());
+        }
+    }
+
     public double calcularPreuFinal(double preu_base, int iva, int quantitat) {
         double total_base = preu_base * quantitat;
         double total_iva = total_base * iva / 100;
@@ -759,12 +796,63 @@ public class App {
         return total_iva;
     }
 
-    public void consultaVendesClient() {
-        System.out.println("Consulta vendes client...");
-    }
+public void consultaVendesClient() {
 
-    public void consultaVendesArticle() {
-        System.out.println("Consulta vendes article...");
+    System.out.println("\n--- CONSULTA VENDES PER CLIENT ---");
+
+    String dni = llegirText("DNI client: ");
+
+    try {
+
+        ResultSet rs = db.consultaVendesClient(dni);
+
+        if (rs.next()) {
+
+            System.out.println("--------------------------------");
+            System.out.println("DNI: " + rs.getString("dni"));
+            System.out.println("Nom client: " + rs.getString("nom"));
+            System.out.println("Número tiquets: " + rs.getInt("num_tiquets"));
+            System.out.println("Total despesa: " + rs.getDouble("total_despesa") + "€");
+            System.out.println("--------------------------------");
+
+        } else {
+
+            System.out.println("No hi ha dades d'aquest client.");
+        }
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+    }
+}
+
+        public void consultaVendesArticle() {
+
+        System.out.println("\n--- CONSULTA VENDES PER ARTICLE ---");
+
+        int id_article = llegirEnter("ID article: ");
+
+        try {
+
+            ResultSet rs = db.consultaVendesArticle(id_article);
+
+            if (rs.next()) {
+
+                System.out.println("--------------------------------");
+                System.out.println("ID article: " + rs.getInt("id"));
+                System.out.println("Nom article: " + rs.getString("nom"));
+                System.out.println("Quantitat venuda: " + rs.getInt("quantitat_venuda"));
+                System.out.println("--------------------------------");
+
+            } else {
+
+                System.out.println("No hi ha dades d'aquest article.");
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 
     public void calcularBeneficis() {

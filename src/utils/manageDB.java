@@ -384,6 +384,23 @@ public class manageDB {
         return id;
     }
 
+    // Consultar les línies d'un tiquet detallades per imprimir
+    public ResultSet consultaLiniesTiquet(int idTiquet) {
+        ResultSet rs = null;
+        String sql = "SELECT lf.id_article, a.nom, lf.quantitat, lf.preu_base, lf.iva, lf.preu_final " +
+                    "FROM linies_factura lf " +
+                    "JOIN articles a ON lf.id_article = a.id " +
+                    "WHERE lf.id_tiquet = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idTiquet);
+            rs = ps.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
     // Insertar linies de factura a la base de dades
     public int inserirLiniaFactura(int id_tiquet, int id_article, int quantitat, double preu_base, int iva, double preu_final) {
         String sql = "INSERT INTO linies_factura (id_tiquet, id_article, quantitat, preu_base, iva, preu_final) VALUES (?, ?, ?, ?, ?, ?)";
