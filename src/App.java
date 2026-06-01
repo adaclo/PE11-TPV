@@ -1,13 +1,7 @@
-import java.util.Scanner;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import utils.manageJSON;
-import utils.manageDB;
-
-import java.io.FileWriter;
 import java.sql.ResultSet;
+import java.util.Scanner;
+import utils.manageDB;
+import utils.manageJSON;
 
 public class App {
 
@@ -802,12 +796,63 @@ public class App {
         return total_iva;
     }
 
-    public void consultaVendesClient() {
-        System.out.println("Consulta vendes client...");
-    }
+public void consultaVendesClient() {
 
-    public void consultaVendesArticle() {
-        System.out.println("Consulta vendes article...");
+    System.out.println("\n--- CONSULTA VENDES PER CLIENT ---");
+
+    String dni = llegirText("DNI client: ");
+
+    try {
+
+        ResultSet rs = db.consultaVendesClient(dni);
+
+        if (rs.next()) {
+
+            System.out.println("--------------------------------");
+            System.out.println("DNI: " + rs.getString("dni"));
+            System.out.println("Nom client: " + rs.getString("nom"));
+            System.out.println("Número tiquets: " + rs.getInt("num_tiquets"));
+            System.out.println("Total despesa: " + rs.getDouble("total_despesa") + "€");
+            System.out.println("--------------------------------");
+
+        } else {
+
+            System.out.println("No hi ha dades d'aquest client.");
+        }
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+    }
+}
+
+        public void consultaVendesArticle() {
+
+        System.out.println("\n--- CONSULTA VENDES PER ARTICLE ---");
+
+        int id_article = llegirEnter("ID article: ");
+
+        try {
+
+            ResultSet rs = db.consultaVendesArticle(id_article);
+
+            if (rs.next()) {
+
+                System.out.println("--------------------------------");
+                System.out.println("ID article: " + rs.getInt("id"));
+                System.out.println("Nom article: " + rs.getString("nom"));
+                System.out.println("Quantitat venuda: " + rs.getInt("quantitat_venuda"));
+                System.out.println("--------------------------------");
+
+            } else {
+
+                System.out.println("No hi ha dades d'aquest article.");
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 
     public void calcularBeneficis() {
@@ -836,10 +881,12 @@ public class App {
 
         try {
             ResultSet rs = db.consultaBeneficisArticles(ordre);
+            int comptador = 0;
 
             System.out.println("\n--- INFORME DE BENEFICIS ---");
 
             while (rs.next()) {
+                comptador++;
                 System.out.println("--------------------------------");
                 System.out.println("ID article: " + rs.getInt("id"));
                 System.out.println("Nom: " + rs.getString("nom"));
@@ -852,6 +899,10 @@ public class App {
             }
 
             System.out.println("--------------------------------");
+
+            if (comptador == 0) {
+                System.out.println("No hi ha articles per mostrar.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
